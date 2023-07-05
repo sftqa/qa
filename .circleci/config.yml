@@ -13,9 +13,13 @@ jobs:
     parallelism: 4
     steps:
       - checkout
+      - run: npm i -D @playwright/test
+      - run: npx playwright install
+      - run: npx playwright install chrome
       - run: echo "Executor configuration for pw-focal-development"
-      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npx playwright test -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
-
+      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npx playwright test --project=chromium -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+      - store_test_results:
+          path: ./outcome/test-results/results.xml
 workflows:
   version: 2
   my-workflow:

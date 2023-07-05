@@ -1,21 +1,23 @@
 version: 2.1
-jobs:
-  run-test:
+
+executors:
+  pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.35.0-jammy
-    # Steps to the job
+      - image: mcr.microsoft.com/playwright:v1.35.0-jammy  # Specify the base Docker image for your tests
+    environment:
+      VARIABLE_NAME: value  # Define any required environment variables
+
+jobs:
+  job-name:
+    executor: pw-focal-development
+    parallelism: 4
     steps:
       - checkout
-      - run: npm i -D @playwright/test
-      - run: npx playwright install
-      - run: npx playwright install chrome
-      - run:
-          name: Run test
-          command: npx playwright test --project=chromium
-      - store_test_results:
-          path: ./outcome/test-results/results.xml
-# Invoke jobs via workflows
+      - run: echo "Executor configuration for pw-focal-development"
+      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npx playwright test -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+
 workflows:
-  run-test-workflow:
+  version: 2
+  my-workflow:
     jobs:
-      - run-test
+      - job-name

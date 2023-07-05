@@ -10,8 +10,22 @@ jobs:
       - run:
           name: Run test
           command: npx playwright test
+      - run:
+          name: generate allure report
+          command: |
+            sudo npm install -g allure-commandline
+            echo BRANCH=development >> allure-results/environment.properties
+            echo COMMIT=$CI_PULL_REQUEST/commits/$CIRCLE_SHA1 >> allure-results/environment.properties
+            allure generate --clean
+          when: always
       - store_test_results:
           path: ./outcome/test-results/results.xml
+
+      - store_artifacts:
+          path: allure-report/
+
+      - store_artifacts:
+          path: playwright-report/
 # Invoke jobs via workflows
 workflows:
   run-test-workflow:

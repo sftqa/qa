@@ -1,26 +1,21 @@
 version: 2.1
-workflows:
-  version: 2
-  build-and-test:
-    jobs:
-      - test
-
 jobs:
-  test:
+  run-test:
     docker:
-      - image: node:16
+      - image: mcr.microsoft.com/playwright:v1.35.0-jammy
+    # Steps to the job
     steps:
       - checkout
+      - run: npm i -D @playwright/test
+      - run: npx playwright install
+      - run: npx playwright install chrome
       - run:
-          name: Install dependencies
-          command: npm ci
-      - run:
-          name: Install Playwright Browsers
-          command: npx playwright install --with-deps
-      - run:
-          name: Run Playwright tests
-          command: npx playwright test --grep=@smoke
-      - persist_to_workspace:
-          root: .
-          paths:
-            - playwright-report/
+          name: Run test
+          command: PLAYWRIGHT_JUNIT_OUTPUT_NAME=results.xml npx playwright test --reporter=junit --project=chromium
+      - store_test_results:
+          path: results.xml
+# Invoke jobs via workflows
+workflows:
+  run-test-workflow:
+    jobs:
+      - run-test

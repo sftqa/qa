@@ -10,6 +10,17 @@ jobs:
       - run:
           name: Run test
           command: npx playwright test --grep=@smoke
+      - run:
+          name: Report Results
+          command: |
+            # Report the test results back to the react-portfolio-app repository
+            curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
+              -H "Authorization: Bearer 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" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "state": "success",
+                "context": "circleci/tests",
+                "description": "Tests passed successfully
       - store_test_results:
           path: ./outcome/test-results/results.xml
 

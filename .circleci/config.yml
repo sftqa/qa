@@ -39,6 +39,7 @@ jobs:
                   "description": "Some tests failed"
                 }'
               exit 1
+            fi
           when: always
 
       - store_test_results:

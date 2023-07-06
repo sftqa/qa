@@ -23,7 +23,19 @@ jobs:
       - run:
           name: Process test results
           command: |
-            if [ $? -eq 0 ]; then
+            
+            if grep -q "failed" test-results.txt; then
+              # At least one test failed
+              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
+                -H "Authorization: Bearer $CIRCLE_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "state": "failure",
+                  "context": "circleci/tests",
+                  "description": "Some tests failed"
+                }'
+              exit 1
+            else
               # All tests passed
               curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
                 -H "Authorization: Bearer $CIRCLE_TOKEN" \
@@ -33,17 +45,6 @@ jobs:
                   "context": "circleci/tests",
                   "description": "All tests passed"
                 }'
-            else
-              # At least one test failed
-              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
-                -H "Authorization: Bearer $CIRCLE_TOKEN" \
-                -H "Content-Type: application/json" \
-                -d '{
-                  "state": "failure",
-                  "context": "circleci/tests",
-                  "description": "Some tests failed"
-                }'
-              exit 1
             fi
           when: always
 

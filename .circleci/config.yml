@@ -1,5 +1,10 @@
 version: 2.1
 
+parameters:
+  commit:
+    type: string
+    default: "current"
+
 jobs:
   run-test:
     docker:
@@ -20,7 +25,7 @@ jobs:
           command: |
             if [ $? -eq 0 ]; then
               # All tests passed
-              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
+              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
                 -H "Authorization: Bearer $CIRCLE_TOKEN" \
                 -H "Content-Type: application/json" \
                 -d '{
@@ -52,7 +57,4 @@ workflows:
   version: 2
   build:
     jobs:
-      - run-test:
-          parameters:
-            CIRCLE_SHA1:
-              type: string
+      - run-test

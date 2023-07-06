@@ -13,17 +13,17 @@ jobs:
     steps:
       - checkout
       - run: npm ci
-      # - run:
-      #     name: Run tests
-      #     command: npx playwright test --grep=@smoke
-      #     no_output_timeout: 10m
-      #     environment:
-      #       NO_COLOR: "1"
+      - run:
+          name: Run tests
+          command:  npx playwright test --grep=@smoke --reporter=list> test-results.txt
+          no_output_timeout: 10m
+          environment:
+            NO_COLOR: "1"
 
       - run:
           name: Process test results
           command: |
-            npx playwright test --grep=@smoke --reporter=list> test-results.txt
+          
             if grep -q "failed" test-results.txt; then
               # At least one test failed
               curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \

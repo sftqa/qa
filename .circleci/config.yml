@@ -23,8 +23,31 @@ jobs:
       - run:
           name: Process test results
           command: |
-            npx playwright test --grep=@smoke
-            if [ -e "outcome/test-results/results.xml" ]; then
+            npx playwright test --grep=@smoke --reporter=list> test-results.txt
+            if grep -q "failed" test-results.txt; then
+              # At least one test failed
+              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
+                -H "Authorization: Bearer $CIRCLE_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "state": "failure",
+                  "context": "circleci/tests",
+                  "description": "Some tests failed"
+                }'
+              exit 1
+            else
+              # All tests passed
+              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
+                -H "Authorization: Bearer $CIRCLE_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "state": "success",
+                  "context": "circleci/tests",
+                  "description": "All tests passed"
+                }'
+            fi
+
+            if [ -e "./outcome/test-results/results.xml" ]; then
               # Test results file exists
               if grep -q "<failure" ./outcome/test-results/results.xml; then
                 # At least one test failed

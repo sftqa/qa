@@ -10,17 +10,11 @@ jobs:
       - run:
           name: Run test
           command: npx playwright test --grep=@smoke
-      - run:
-          name: generate allure report
-          command: |
-            npm install -g allure-commandline
-            allure generate --clean
-          when: always
       - store_test_results:
           path: ./outcome/test-results/results.xml
 
       - store_artifacts:
-          path: allure-report/
+          path: ./allure-results/
 
       - store_artifacts:
           path: ./outcome/html

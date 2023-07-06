@@ -20,7 +20,8 @@ jobs:
               -d '{
                 "state": "success",
                 "context": "circleci/tests",
-                "description": "Tests passed successfully
+                "description": "Tests passed successfully"
+                
       - store_test_results:
           path: ./outcome/test-results/results.xml
 

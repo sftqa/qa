@@ -1,6 +1,5 @@
 version: 2.1
 
-
 jobs:
   run-test:
     docker:
@@ -21,18 +20,18 @@ jobs:
           command: |
             if [ $? -eq 0 ]; then
               # All tests passed
-              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$COMMIT \
-                -H "Authorization: $CIRCLE_TOKEN" \
+              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
+                -H "Authorization: Bearer $CIRCLE_TOKEN" \
                 -H "Content-Type: application/json" \
                 -d '{
                   "state": "success",
                   "context": "circleci/tests",
-                  "description": "All my tests passed"
+                  "description": "All tests passed"
                 }'
             else
               # At least one test failed
-              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$COMMIT \
-                -H "Authorization: $CIRCLE_TOKEN" \
+              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
+                -H "Authorization: Bearer $CIRCLE_TOKEN" \
                 -H "Content-Type: application/json" \
                 -d '{
                   "state": "failure",
@@ -46,9 +45,6 @@ jobs:
       - store_test_results:
           path: ./outcome/test-results/results.xml
 
-      # - store_artifacts:
-      #     path: ./allure-results/
-
       - store_artifacts:
           path: ./outcome/html
 
@@ -58,5 +54,5 @@ workflows:
     jobs:
       - run-test:
           parameters:
-            COMMIT:
+            CIRCLE_SHA1:
               type: string

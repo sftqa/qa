@@ -26,7 +26,6 @@ export default defineConfig({
   reporter: [
     ["html", { outputFolder: "./outcome/html", open: process.env.CI ? "never" : "on-failure" }],
     ["line"],
-    ["list", { outputFile: "test-results.txt" }],
     ["junit", { outputFile: "./outcome/test-results/results.xml" }],
     ["allure-playwright"],
     // ["@reportportal/agent-js-playwright", RPconfig],

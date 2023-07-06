@@ -24,27 +24,34 @@ jobs:
           name: Process test results
           command: |
             
-            if grep -q "failed" test-results.txt; then
-              # At least one test failed
-              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
-                -H "Authorization: Bearer $CIRCLE_TOKEN" \
-                -H "Content-Type: application/json" \
-                -d '{
-                  "state": "failure",
-                  "context": "circleci/tests",
-                  "description": "Some tests failed"
-                }'
-              exit 1
+            if [ -e "./outcome/test-results/results.xml" ]; then
+              # Test results file exists
+              if grep -q "<failure" ./outcome/test-results/results.xml; then
+                # At least one test failed
+                curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
+                  -H "Authorization: Bearer $CIRCLE_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d '{
+                    "state": "failure",
+                    "context": "circleci/tests",
+                    "description": "Some tests failed"
+                  }'
+                exit 1
+              else
+                # All tests passed
+                curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
+                  -H "Authorization: Bearer $CIRCLE_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d '{
+                    "state": "success",
+                    "context": "circleci/tests",
+                    "description": "All tests passed"
+                  }'
+              fi
             else
-              # All tests passed
-              curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/<< pipeline.parameters.commit >> \
-                -H "Authorization: Bearer $CIRCLE_TOKEN" \
-                -H "Content-Type: application/json" \
-                -d '{
-                  "state": "success",
-                  "context": "circleci/tests",
-                  "description": "All tests passed"
-                }'
+              # Test results file not found
+              echo "Test results file not found!"
+              exit 1
             fi
           when: always
 

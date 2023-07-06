@@ -1,5 +1,6 @@
 version: 2.1
 
+
 jobs:
   run-test:
     docker:
@@ -51,8 +52,11 @@ jobs:
       - store_artifacts:
           path: ./outcome/html
 
-# Invoke jobs via workflows
 workflows:
-  run-test-workflow:
+  version: 2
+  build:
     jobs:
-      - run-test
+      - run-test:
+          parameters:
+            CIRCLE_SHA1:
+              type: string

@@ -18,7 +18,7 @@ test.describe(`Sign in tests`, () => {
     });
   });
 
-  test("should NOT able to sign in with valid credentials @smoke", async ({ loginPage, profilePage }) => {
+  test("should NOT able to sign in with valid credentials", async ({ loginPage, profilePage }) => {
     await test.step(`GIVEN user is on Login page`, async () => {
       await loginPage.open();
     });

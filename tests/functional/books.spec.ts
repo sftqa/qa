@@ -9,14 +9,14 @@ test.describe(`Books tests`, () => {
     });
   });
 
-  test("should be able to see a book summary @smoke", async ({ testDataProvider, bookStorePage }) => {
+  test("should be able to see a book summary", async ({ testDataProvider, bookStorePage }) => {
     const bookForTest = testDataProvider.getBook();
     await test.step(`THEN user should see Book summary right on Book store page`, async () => {
       await bookStorePage.getBookRow(0).verifyBook(bookForTest);
     });
   });
 
-  test("should be able to see a book details", async ({ testDataProvider, bookStorePage, bookDetailsPage }) => {
+  test("should be able to see a book details @regression", async ({ testDataProvider, bookStorePage, bookDetailsPage }) => {
     const bookForTest = testDataProvider.getBook();
     await test.step(`WHEN user selects a book`, async () => {
       await bookStorePage.getBookRow(0).productTitle.click();

@@ -24,7 +24,7 @@ jobs:
           name: Process test results
           command: |
             
-            if [ -e "./outcome/test-results/results.xml" ]; then
+            if [ -e "outcome/test-results/results.xml" ]; then
               # Test results file exists
               if grep -q "<failure" ./outcome/test-results/results.xml; then
                 # At least one test failed

@@ -21,17 +21,17 @@ jobs:
             if [ $? -eq 0 ]; then
               # All tests passed
               curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
-                -H "Authorization: Bearer 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" \
+                -H "Authorization: Bearer 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" \
                 -H "Content-Type: application/json" \
                 -d '{
                   "state": "success",
                   "context": "circleci/tests",
-                  "description": "All tests passed"
+                  "description": "All my tests passed"
                 }'
             else
               # At least one test failed
               curl -X POST https://api.github.com/repos/AndriiFrolov/react-portfolio-app/statuses/$CIRCLE_SHA1 \
-                -H "Authorization: Bearer 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" \
+                -H "Authorization: Bearer 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" \
                 -H "Content-Type: application/json" \
                 -d '{
                   "state": "failure",
